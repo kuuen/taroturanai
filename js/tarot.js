@@ -148,6 +148,18 @@ if (btn_push == 0){
   }
 };
 
+// // android からの呼び出し
+// function androidResume() {
+
+//   // clientHeightが取得できない場合
+//   if (document.documentElement.clientHeight == 0) {
+//     // シャッフルや配る描画がずれるのを防ぐため再ロードする
+//     window.location.reload();
+//   }
+
+//   document.getElementById("debug").innerHTML = "androidResume実行 :clientHeight:" +  clientHeight + "<br/>document.documentElement.clientHeight:<br/>" + document.documentElement.clientHeight;
+// }
+
 // async function shuffle(x) {
 
 
@@ -168,9 +180,6 @@ if (btn_push == 0){
 //     resolve(x);
 //   });  
 // }
-
-
-const _sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 
 // モーダル　占い結果、カード参照
