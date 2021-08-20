@@ -81,15 +81,8 @@ let cards = [
 ];
 
 // 円運動の中心座標。
-// 今回はcanvasの真ん中を中心に移動する。
-//const centerX = 250;
-//let centerX = 400; 
 let centerX = 0;
-
-//const centerY = 250;
-// let centerY = 150;
 let centerY = 0;
-//const centerY = 350;
 
 // 画面幅
 let clientWidth = 0;
@@ -100,26 +93,13 @@ let clientHeight = 0;
 // ２：１の比率にしたい　カードを配る位置で使用する
 let withHiritu = 0;
 
-// デバイスのピクセル数の取得
-// let clientWidth = window.devicePixelRatio * screen.width;
-// let clientHeight = window.devicePixelRatio * screen.height;
-
-// let clientWidth = window.devicePixelRatio * window.innerWidth;
-// let clientHeight = window.devicePixelRatio * window.innerHeight;
-
-
-// let clientWidth = window.innerWidth;
-// let clientHeight = window.innerHeight;
-
-// document.getElementById("debug").innerHTML = "window.devicePixelRatio * screen.Widht :" +  window.devicePixelRatio * screen.width;
-
 // シャッフルを停止するかどうかの判断
 let isShuffleStop = false;
 
 // シャッフル前の初期化処理
 function drowShuffleInit() {
 
-  // 画面幅
+  // 画面幅　androidではあるタイミングで　clientWidth等の値が0となるのでここで値を取得する
   clientWidth = document.documentElement.clientWidth;
 
   // 画面高さ
@@ -156,8 +136,13 @@ function drowShuffleInit() {
       // カードがない場合生成する
       canvas = document.createElement('span');
 
-//      canvas.className = "circle1";
-      canvas.className = "card card_ura";
+      canvas.className = "card card_ura"; // フィーチャー グラフィック 用に一時的にコメントアウト
+
+      // フィーチャー グラフィック 要に一時的に設定　↓
+      // canvas.className =　"card card_omote"
+      // canvas.style.backgroundImage = "url('" + tarots[cards[i].ID].image +"')";
+      // フィーチャー グラフィック 要に一時的に設定　↑
+
       canvas.id = cards[i].ID;
       
       document.body.appendChild(canvas);
@@ -224,7 +209,9 @@ function loopShuffle(timestamp) {
 
     //          半径            半径×cos(現行角度) + 水平中心座標
     cards[i].x = 80 * Math.cos(cards[i].angleRad)  + centerX;
-    cards[i].y = 80 * Math.sin(cards[i].angleRad)  + centerY;
+    // cards[i].x = 80 * Math.cos(cards[i].angleRad) * 3.8 + centerX; // フィーチャー グラフィック 用
+    cards[i].y = 80 * Math.sin(cards[i].angleRad) + centerY;
+    
 
     card = document.getElementById(cards[i].ID);
     if ( !card.style.left ) {
