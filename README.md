@@ -3,15 +3,15 @@
 
 カードの画像データは別途用意する
 
-●環境構築方法  
+# 環境構築方法  
 Anacondaをインストール  
   
 Anaconda Prompt (anaconda3)を起動、以下をインストール  
   
-# Huggingface Transformersのインストール  
+## Huggingface Transformersのインストール  
 conda install transformers  
   
-# Sentencepieceのインストール  
+## Sentencepieceのインストール  
 conda install sentencepiece  
   
 apacheをphp動作できるように設定する
