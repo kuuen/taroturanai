@@ -1,0 +1,59 @@
+<?php
+
+$text = "PHP処理で失敗しました";
+ErrLog($text);
+function ErrLog($text){
+  $path = 'C:\Apache\logs/phplog.log';
+  $currentdate = date("m/d H:i:s");
+  $logmessages = $currentdate . " : " . $text;
+  error_log($logmessages . "\n", 3, $path);
+}
+
+
+function socketTuusin($keyword) {
+    $address = '127.0.0.1';
+    $port = 4922;
+
+    $fp  = fsockopen( $address, $port, $errono, $errmsg, 30 );
+
+
+    if (!$fp) {
+        echo "接続できません<br>\n";
+    } else {
+        // 読み書きのタイムアウト設定
+        socket_set_timeout($fp, 2);
+//        fputs ($fp, "GET / HTTP/1.0\r\nHost: www.php.net\r\n\r\n");
+
+        fputs($fp, $keyword);
+
+        $msg = "";
+        while (!feof($fp)) {
+            $msg = fgets ($fp, 4096);
+        }
+        // ソケットがタイムアウトしたかどうか調べる
+        $stat = socket_get_status($fp);
+        if ($stat["timed_out"]) { echo "timeout"; }
+        // ソケットを閉じる
+        fclose ($fp);
+    }
+
+    return $msg;
+}
+
+$json = file_get_contents('php://input');
+// Converts json data into a PHP object 
+//$data = json_decode($json, true);
+
+ErrLog($json);
+
+$msg = socketTuusin($json);
+
+$response = ["res" => $msg];
+
+header("Access-Control-Allow-Origin: *");
+// echo "Content-Type: text/json; charset=utf-8";
+// echo "Access-Control-Allow-Origin: *\r\n";
+echo json_encode($response);
+
+
+?>

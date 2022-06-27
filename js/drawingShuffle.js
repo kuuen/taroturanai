@@ -81,43 +81,52 @@ let cards = [
 ];
 
 // 円運動の中心座標。
+// 今回はcanvasの真ん中を中心に移動する。
+//const centerX = 250;
+//let centerX = 400; 
 let centerX = 0;
+
+//const centerY = 250;
+// let centerY = 150;
 let centerY = 0;
+//const centerY = 350;
 
 // 画面幅
-let clientWidth = 0;
+let clientWidth = document.documentElement.clientWidth;
 
 // 画面高さ
-let clientHeight = 0;
+let clientHeight = document.documentElement.clientHeight;
+
 
 // ２：１の比率にしたい　カードを配る位置で使用する
 let withHiritu = 0;
+// もし横領域が狭く2：1にできない場合は、画像横サイズを使用する
+if ((document.documentElement.clientHeight / 2) > clientWidth) {
+  // 画面のサイズを使用する
+  withHiritu = document.documentElement.clientWidt;
+} else {
+  // 縦画面と2：1となる幅を使用する
+  withHiritu = document.documentElement.clientHeight / 2;
+}
+
+// デバイスのピクセル数の取得
+// let clientWidth = window.devicePixelRatio * screen.width;
+// let clientHeight = window.devicePixelRatio * screen.height;
+
+// let clientWidth = window.devicePixelRatio * window.innerWidth;
+// let clientHeight = window.devicePixelRatio * window.innerHeight;
+
+
+// let clientWidth = window.innerWidth;
+// let clientHeight = window.innerHeight;
+
+// document.getElementById("debug").innerHTML = "window.devicePixelRatio * screen.Widht :" +  window.devicePixelRatio * screen.width;
 
 // シャッフルを停止するかどうかの判断
 let isShuffleStop = false;
 
 // シャッフル前の初期化処理
 function drowShuffleInit() {
-
-  // 画面幅　androidではあるタイミングで　clientWidth等の値が0となるのでここで値を取得する
-  clientWidth = document.documentElement.clientWidth;
-
-  // 画面高さ
-  clientHeight = document.documentElement.clientHeight;
-
-  isShuffleStop = false;
-
-  // ２：１の比率にしたい　カードを配る位置で使用する
-
-  // もし横領域が狭く2：1にできない場合は、画像横サイズを使用する
-  if ((document.documentElement.clientHeight / 2) > clientWidth) {
-    // 画面のサイズを使用する
-    withHiritu = document.documentElement.clientWidt;
-  } else {
-    // 縦画面と2：1となる幅を使用する
-    withHiritu = document.documentElement.clientHeight / 2;
-  }
-
 
   // centerX = clientWidth * 0.50;
   // centerY = clientHeight * 0.05;
@@ -136,13 +145,8 @@ function drowShuffleInit() {
       // カードがない場合生成する
       canvas = document.createElement('span');
 
-      canvas.className = "card card_ura"; // フィーチャー グラフィック 用に一時的にコメントアウト
-
-      // フィーチャー グラフィック 要に一時的に設定　↓
-      // canvas.className =　"card card_omote"
-      // canvas.style.backgroundImage = "url('" + tarots[cards[i].ID].image +"')";
-      // フィーチャー グラフィック 要に一時的に設定　↑
-
+//      canvas.className = "circle1";
+      canvas.className = "card card_ura";
       canvas.id = cards[i].ID;
       
       document.body.appendChild(canvas);
@@ -209,9 +213,7 @@ function loopShuffle(timestamp) {
 
     //          半径            半径×cos(現行角度) + 水平中心座標
     cards[i].x = 80 * Math.cos(cards[i].angleRad)  + centerX;
-    // cards[i].x = 80 * Math.cos(cards[i].angleRad) * 3.8 + centerX; // フィーチャー グラフィック 用
-    cards[i].y = 80 * Math.sin(cards[i].angleRad) + centerY;
-    
+    cards[i].y = 80 * Math.sin(cards[i].angleRad)  + centerY;
 
     card = document.getElementById(cards[i].ID);
     if ( !card.style.left ) {
@@ -238,9 +240,18 @@ function loopShuffle(timestamp) {
 // シャッフルストップ
 function shuffleStop() {
   for (let i in cards) {
-    card = document.getElementById(cards[i].ID);
+   card = document.getElementById(cards[i].ID);
+  //  animation-play-state: paused;
+//    let canvas = document.createElement('span');
+//    canvas.className = "circle1";
+//    canvas.id = cards[i].ID;
+//    document.body.appendChild(canvas);
+//    canvas.style.animationName  = "rotation";
+//    canvas.style.animationDuration = cards[i].DURATION;
     card.style.animationPlayState = "paused";
-    
+    // animationDuration = "0s";
+//    canvas.style.animationTimingFunction = "linear"
+//    canvas.style.animationIterationCount = "infinite"; 
   };
 
   isShuffleStop = true;
@@ -279,6 +290,8 @@ function loopShuffleEnd(timestamp) {
     cards[i].angleRad += cards[i].ANGLE_RADX * Math.PI / 180;
     
     // ここで座標を変化させていく。
+    // cards[i].x = (end * Math.cos(cards[i].angleRad) * 1.0 + centerX)- sukosiSageruX;
+    // cards[i].y = (end * Math.sin(cards[i].angleRad) * cards[i].sin + centerY) + sukosiSageruY;
 
     // カードの座標を設定
     cards[i].x = end * Math.cos(cards[i].angleRad)  + centerX - sukosiSageruX;
@@ -287,10 +300,20 @@ function loopShuffleEnd(timestamp) {
     // ちょっと下に下げる
     if (countShuffleEnd % 4 == 0) {
 
+      document.getElementById("debug").innerHTML = "clientHeight:" +  clientHeight;
+
       // ある程度下げたらストップ
      if (cards[i].y < (clientHeight * 0.85)) {
+      // if (cards[i].y < (clientHeight * 0.55)) {
+        // sukosiSageruY += 0.18;
         sukosiSageruY +=  document.documentElement.clientHeight * 0.000250;
       }
+
+      // document.getElementById("debug").innerHTML = "sukosiSageruY:" +  sukosiSageruY;
+
+      // if (sukosiSageruX < 375) {
+      //   sukosiSageruX += 0.1;
+      // }
     }
 
     card = document.getElementById(cards[i].ID);
@@ -304,6 +327,16 @@ function loopShuffleEnd(timestamp) {
     card.style.zIndex = cards[i].index;
   }
   countShuffleEnd++;
+
+  
+  // for (let i in cards) {
+
+  //   let end = Math.floor(cards[i].FROM_CENTER) - countShuffleEnd;
+
+  //   if (end < 0) {
+  //     endFlg = true;
+  //   }
+  // }
 
   //  シャッフル終了処理が完了したかで続行するかの判断をする
   if (loopShuffleEndFlg == false) {
@@ -327,6 +360,8 @@ function loopShuffleEnd(timestamp) {
 
     // 初期化
     countShuffleEnd = 0;
+//    sukosiSageru = 0;
+    // endFlg = true;
   }
 }
 
@@ -351,9 +386,11 @@ let catArray = [];
 // 束ねてあるカードのある位置からカットしてそれを下側に移動する
 function loopCat() {
 
+    // 大きい程前面になる
+//  card.style.zIndex = cards[i].index;
   // ソートする
-
-  // カードを上に移動しているかどうかの判断
+//  cards.sort(catCompare);
+  // カードを上に移動しているか同課の判断
   if (loopCatMode == true) {
 
     // カードのY位置上昇仕切ったかの判断
@@ -379,15 +416,26 @@ function loopCat() {
       for (let i =0; i < catIndex; i++) {
         let card = document.getElementById(cards[i].ID);
 
+        // // styleが取得できない場合のおまじない
+        // if ( !card.style.left ) {
+        //   var style = window.getComputedStyle(card);
+        //   card.style.left = style.left;
+        // }
         // カットしたカードを保持
         catArray.push(cards[i]);
+    
+      //    card.style.left = cards[i].x + "px";
+      //  card.style.top  =  "20px";
+        // loopCatMotoY = loopCatY;
         card.style.top  =  loopCatY + "px";
       }
       loopCatCount++;
     }
 
   } else {
-    // カードをまとめる
+
+    // loopCatCount
+    // if (loopCatY <= sukosiSageruY + 150) {
 
     if (loopCatCount > 0) {
       // カットしたカードを下に置く
@@ -410,6 +458,10 @@ function loopCat() {
       loopCatMode == true;
       loopCatY = 150;
       catArray = [];
+
+//      btnShuffle = document.getElementById("btn_shuffle");
+//      btnShuffle.style.visibility ="visible";
+//      btnShuffle.innerHTML = 'とちゅう';
 
       sukosiSageru = 0; // 初期化
 
@@ -469,6 +521,9 @@ let card5;
 let card6;
 let card7;
 
+// ai に渡す引数
+let argsai = '';
+
 // 結果表示するhtmlを格納(やり方が良くない。ほかに方法があれば変更)
 let resultMassage = [];
 
@@ -492,19 +547,41 @@ function kubaruSub(card, ms) {
   zittai.className  = "card card_omote";
 
   // カードが表裏で処理を変更
+  // maeTop = zittai.style.top;
   if (card.ForwardReverse == 0) {
     // 表の場合
     zittai.style.transform = "rotate(0deg)";
     rm.ichi = "正位置";
-    rm.imi = tarot.meaning[0];
+
+    sei = '';
+    tarot.meaning[0].forEach(function(element){
+      sei += element + ","
+    });
+
+    rm.imi = sei.slice(0, sei.length - 1);
+
+    argsai += ms + "は" + tarot.meaning[0][getRandam(0, tarot.meaning[0].length - 1)] + "、";
+
   } else {
     // 裏の場合　裏返す
-
+    // zittai.style.transform = "rotate(180deg)";
     zittai.style.transform = "scale(-1, -1)";
+    // zittai.style.margin = "30%";
     rm.ichi = "逆位置";
-    rm.imi = tarot.meaning[1];
-  }
 
+    gyaku = '';
+    tarot.meaning[1].forEach(function(element){
+      gyaku += element + ","
+    });
+
+    rm.imi = gyaku.slice(0, gyaku.length - 1);
+
+    argsai += ms + "は" + tarot.meaning[1][getRandam(0, tarot.meaning[1].length - 1)] + "、";
+  }
+  // card1.innerHTML = t.name_ja;  
+  // zittai.style.top = maeTop + 50;
+
+  // rm.image = "url('" + tarot.image +"')";
   rm.image = tarot.image;
 
   // 結果のリストに追加
@@ -524,6 +601,8 @@ function kubaru() {
   // 結果をまとめる
   let rm1 = [];
 
+  argsai = '';
+
   // style、画像の設定等を行う
   card1 = kubaruSub(cards[7-1], "過去");
   card2 = kubaruSub(cards[8-1], '現在');
@@ -533,11 +612,19 @@ function kubaru() {
   card6 = kubaruSub(cards[12-1], '願望');
   card7 = kubaruSub(cards[13-1], '結論');
 
+  // kitenTop = parseInt(document.getElementById(cards[0].ID).style.top);
+
   // カードがおいてある画面の中央位置を取得k
   kitenLeft = parseInt(document.getElementById(cards[0].ID).style.left);
 
   // 結果モーダルの作成
   let msg = "";
+
+  // ☆この辺か？
+  msg += "<div id='ai-result'>しばらくおまちを</div>"
+
+  aiHantei()
+
   for(let i in resultMassage) {
     msg += "<table><tr> <th>";
     msg += resultMassage[i].zyoukyou + "</th></tr>"
@@ -557,6 +644,11 @@ function kubaru() {
 
   // カードを描画、移動
   kubaruMove1();
+
+  //  card5.style.top  =  "200px";
+  //  card2.style.left  =  "600px";
+  //kubaruMove7();
+
 }
 
   // 過去となるカードを描画、移動
@@ -569,6 +661,7 @@ function kubaruMove1() {
   if (parseInt(card1.style.top) > 0) {
 
     card1.style.top = parseInt(card1.style.top) - 30 + "px";
+    // card1.style.top = parseInt(card1.style.top) - (clientHeight / 54) + "px";
 
     window.requestAnimationFrame(kubaruMove1);
   } else {
@@ -577,30 +670,53 @@ function kubaruMove1() {
 
     kubaruMoveTopKiten = parseInt(card2.style.top);
     topKeisan = parseInt(card2.style.left);
+    // kubaruMove2(parseInt(card2.style.top));
 
+    // window.requestAnimationFrame(kubaruMove2);
     window.requestAnimationFrame(kubaruMove2.bind(null, kubaruMoveTopKiten, topKeisan));
   }
 }
 
+// let kubaruMove2TopKiten = 0;
+// let topKeisan = 0;
   // 現在となるカードを描画、移動
 function kubaruMove2(kubaruMoveTopKiten, topKeisan) {
+  // function kubaruMove2() {  
   let top = 0;
   let left = 0;
 
-  if (parseInt(card2.style.left) < (kitenLeft +  (withHiritu * 0.38))) {
+  // if (parseInt(card2.style.top) > (clientHeight * 0.45)) {
+    // if (parseInt(card2.style.left) < (kitenLeft +  (clientWidth * 0.33))) {
+  if (parseInt(card2.style.left) < (kitenLeft +  (withHiritu * 0.45))) {
 
+    // card2.style.top = (left) * (-1.2)  + "px";
+    // card2.style.top = (left) * (-1.0) + kubaruMove2TopKiten + (clientHeight * 0.25)  + "px";
     card2.style.top = ( parseInt(card2.style.left) - topKeisan) * (-0.5) + kubaruMoveTopKiten  + "px";
     left = parseInt(card2.style.left) + 10;
     card2.style.left = left + "px";
+    // y=−x2+6x−10
+
+  // card2.style.top = top + "px";
+  // card2.style.left = top * (-1.1) + 1350 + "px"
+    
+//    card2.style.left = top * (-1.2) + (clientWidth * 0.61) + "px"
 
     window.requestAnimationFrame(kubaruMove2.bind(null, kubaruMoveTopKiten, topKeisan));
-
+    // window.requestAnimationFrame(kubaruMove2);
   } else {
+    
+    // はみ出してしまっていないか確認
+    if (clientWidth < parseInt(card2.style.left) + parseInt(card2.style.width)) {
+      // 表示する
+      card2.style.left = clientWidth - parseInt(card2.width) +  "px";
+    }
 
     // 移動が終了していたら次のカードの移動処理開始
     kubaruMoveTopKiten = parseInt(card3.style.top);
     topKeisan = parseInt(card3.style.left);
+    // kubaruMove2(parseInt(card2.style.top));
 
+    // window.requestAnimationFrame(kubaruMove2);
     window.requestAnimationFrame(kubaruMove3.bind(null, kubaruMoveTopKiten, topKeisan));
   }
 } 
@@ -609,8 +725,15 @@ function kubaruMove2(kubaruMoveTopKiten, topKeisan) {
 function kubaruMove3(kubaruMoveTopKiten, topKeisan) {
   let top = 0;
   let left = 0;
+//  if (parseInt(card3.style.top) > 520) {
+  // if (parseInt(card3.style.left) < (kitenLeft -  (withHiritu * 0.33))) {
+    if (parseInt(card3.style.left) >  (kitenLeft -  (withHiritu * 0.45) )) {    
 
-  if (parseInt(card3.style.left) >  (kitenLeft -  (withHiritu * 0.38) )) {    
+//    card3.style.top = ( parseInt(card3.style.left) - topKeisan) * (-0.5) + kubaruMove2TopKiten  + "px";
+
+    // top = parseInt(card3.style.top) - 50;
+    // card3.style.top = top + "px";
+    // card3.style.left = top * (1.2) - 600 + "px";
     card3.style.top = ( parseInt(card3.style.left) - topKeisan) * (0.5) + kubaruMoveTopKiten  + "px";
     left = parseInt(card3.style.left) - 10;
     card3.style.left = left + "px";
@@ -649,7 +772,12 @@ function kubaruMove5(kubaruMoveTopKiten, topKeisan) {
   let top = 0;
   let left = 0;
 
-  if (parseInt(card5.style.left) >  (kitenLeft -  (withHiritu * 0.38) )) {    
+  // if (parseInt(card5.style.top) > 200) {
+  //   top = parseInt(card5.style.top) - 80;
+
+  //   card5.style.top = top + "px";
+  //   card5.style.left = top * 0.5 - 100 + "px"
+  if (parseInt(card5.style.left) >  (kitenLeft -  (withHiritu * 0.45) )) {    
 
         card5.style.top = ( parseInt(card5.style.left) - topKeisan) * (2.0) + kubaruMoveTopKiten  + "px";
         left = parseInt(card5.style.left) - 10;
@@ -670,7 +798,7 @@ function kubaruMove6(kubaruMoveTopKiten, topKeisan) {
   let top = 0;
   let left = 0;
 
-  if (parseInt(card6.style.left) < (kitenLeft +  (withHiritu * 0.38))) {
+  if (parseInt(card6.style.left) < (kitenLeft +  (withHiritu * 0.45))) {
 
     card6.style.top = ( parseInt(card6.style.left) - topKeisan) * (-2.0) + kubaruMoveTopKiten  + "px";
     left = parseInt(card6.style.left) + 10;
@@ -692,6 +820,8 @@ function kubaruMove7() {
     window.requestAnimationFrame(kubaruMove7);
   } else {
     // 全カードの移動が終わったら
+
+    // card4.style.zIndex = 999;
 
     // シャッフルボタンの役割変更
     btnShuffle = document.getElementById("btn_shuffle");
@@ -722,3 +852,34 @@ function kubaruMove7() {
     }
   }
 }
+
+function aiHantei() {
+  var jsondata = JSON.stringify({'msg': '占い。' + argsai});
+
+  // .phpファイルへのアクセス
+  // $.ajax('http://localhost:8080/cgi-bin/test.py',
+  $.ajax('cgi-bin/hantei.php',
+    {
+      type: 'post',
+      data: jsondata,
+      dataType: 'json'
+    }
+  )
+  // 検索成功時にはページに結果を反映
+  .done(function(data) {
+    console.log(data['res'])
+    
+    let airesult = document.getElementById("ai-result");
+    airesult.innerHTML = data['res'];
+    // airesult.innerHTML = 'おくら';
+  })
+  // 検索失敗時には、その旨をダイアログ表示
+  .fail(function() {
+    window.alert('正しい結果を得られませんでした。');
+  });
+}
+
+function getRandam(n, m){
+  let num = Math.floor(Math.random() * (m + 1 - n)) + n;
+  return num
+};
