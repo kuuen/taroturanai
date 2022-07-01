@@ -8,6 +8,21 @@ import torch
 # ソケットライブラリ取り込み
 import socket
 
+import logging
+ 
+#ロガーの生成
+logger = logging.getLogger('mylog')
+#出力レベルの設定
+logger.setLevel(logging.INFO)
+#ハンドラの生成
+handler = logging.FileHandler('log/log.log')
+#ロガーにハンドラを登録
+logger.addHandler(handler)
+#フォーマッタの生成
+fmt = logging.Formatter('%(asctime)s %(message)s')
+
+handler.setFormatter(fmt)
+
 
 tokenizer = T5Tokenizer.from_pretrained("rinna/japanese-gpt-1b")
 model = AutoModelForCausalLM.from_pretrained("rinna/japanese-gpt-1b")
@@ -39,7 +54,7 @@ def generete(prompt):
     decoded = tokenizer.batch_decode(output,skip_special_tokens=True)
     # for i in range(5):
     #     print(decoded[i])
-    print(decoded[0])
+    # print(decoded[0])
     return decoded
 
 
@@ -60,6 +75,9 @@ print("start")
 while True:
     # クライアントの接続受付
     sock_cl, addr = sock_sv.accept()
+
+    logger.info('受付')
+
     # ソケットから byte 形式でデータ受信
     data = sock_cl.recv(1024)
     print(data.decode("utf-8"))

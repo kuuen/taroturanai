@@ -300,7 +300,7 @@ function loopShuffleEnd(timestamp) {
     // ちょっと下に下げる
     if (countShuffleEnd % 4 == 0) {
 
-      document.getElementById("debug").innerHTML = "clientHeight:" +  clientHeight;
+//      document.getElementById("debug").innerHTML = "clientHeight:" +  clientHeight;
 
       // ある程度下げたらストップ
      if (cards[i].y < (clientHeight * 0.85)) {

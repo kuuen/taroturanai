@@ -181,6 +181,8 @@ function androidResume() {
 
 const _sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
+// モーダル参初期画面
+let modalindex = document.getElementById('modalindex');
 
 // モーダル　占い結果、カード参照
 let modalResult = document.getElementById('modalResult');
@@ -422,6 +424,11 @@ function displayTarotModal(tarot) {
 
 // モーダル閉じるボタン
 
+// 初期画面ボタン　参照
+document.getElementById("btnCloseIndex").onclick = function() {
+  modalindex.style.display = 'none';
+}
+
 // 結果窓を閉じる
 document.getElementById("btnCloseResult").onclick = function() {
   document.getElementById("modalResultScroll").scrollTo(0, 0);
@@ -460,3 +467,6 @@ document.getElementById("btnCloseTarot").onclick = function() {
   minorNum = 0; // 選択値を初期化
   modalTarot.style.display = 'none';
 }
+
+// 初期モーダル開く
+modalindex.style.display = 'block';
