@@ -1,7 +1,7 @@
 <?php
 
-$text = "PHP処理で失敗しました";
-ErrLog($text);
+// $text = "PHP処理で失敗しました";
+// ErrLog($text);
 function ErrLog($text){
   $path = 'C:\Apache\logs/phplog.log';
   $currentdate = date("m/d H:i:s");
@@ -44,16 +44,27 @@ $json = file_get_contents('php://input');
 // Converts json data into a PHP object 
 //$data = json_decode($json, true);
 
-ErrLog($json);
-
-$msg = socketTuusin($json);
-
-$response = ["res" => $msg];
+// ErrLog($json);
 
 header("Access-Control-Allow-Origin: *");
-// echo "Content-Type: text/json; charset=utf-8";
-// echo "Access-Control-Allow-Origin: *\r\n";
-echo json_encode($response);
 
+try {
+    $kekka = socketTuusin($json);
+
+    $kekka = json_decode($kekka, true);
+    
+    $response = ["msg" => $kekka['msg']];
+
+    // echo "Content-Type: text/json; charset=utf-8";
+    // echo "Access-Control-Allow-Origin: *\r\n";
+    echo json_encode($response);
+} catch (Exception $e) {
+  //例外が発生した(=Exceptionオブジェクトがthrowされた)ときの処理
+  ErrLog($e->getMessage());
+
+  echo json_encode(["msg" => 'なんか失敗した']);
+} finally {
+  //例外が発生してもしなくても必ず行いたい処理
+}
 
 ?>

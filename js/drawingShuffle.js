@@ -524,6 +524,8 @@ let card7;
 // ai に渡す引数
 let argsai = '';
 
+let uranaiKekka = '';
+
 // 結果表示するhtmlを格納(やり方が良くない。ほかに方法があれば変更)
 let resultMassage = [];
 
@@ -560,7 +562,12 @@ function kubaruSub(card, ms) {
 
     rm.imi = sei.slice(0, sei.length - 1);
 
-    argsai += ms + "は" + tarot.meaning[0][getRandam(0, tarot.meaning[0].length - 1)] + "、";
+    k = tarot.meaning[1][getRandam(0, tarot.meaning[1].length - 1)];
+    argsai += ms + "は" + k + "、";
+
+    if (ms == '結論') {
+      uranaiKekka = k;
+    }
 
   } else {
     // 裏の場合　裏返す
@@ -576,7 +583,12 @@ function kubaruSub(card, ms) {
 
     rm.imi = gyaku.slice(0, gyaku.length - 1);
 
-    argsai += ms + "は" + tarot.meaning[1][getRandam(0, tarot.meaning[1].length - 1)] + "、";
+    k = tarot.meaning[1][getRandam(0, tarot.meaning[1].length - 1)];
+    argsai += ms + "は" + k + "、";
+
+    if (ms == '結論') {
+      uranaiKekka = k;
+    }
   }
   // card1.innerHTML = t.name_ja;  
   // zittai.style.top = maeTop + 50;
@@ -623,7 +635,8 @@ function kubaru() {
   // ☆この辺か？
   msg += "<div id='ai-result'>しばらくおまちを</div>"
 
-  aiHantei()
+  // aiHantei(argsai, uranaiKekka, 20, 50)
+  aiHantei(argsai, 20, 50)
 
   for(let i in resultMassage) {
     msg += "<table><tr> <th>";
@@ -637,7 +650,6 @@ function kubaru() {
     }
     
     msg += "<tr><td>" + resultMassage[i].imi + "</td></tr>";
-
   }
   let resultContent = document.getElementById("resultContent");
   resultContent.innerHTML = msg;
@@ -853,8 +865,8 @@ function kubaruMove7() {
   }
 }
 
-function aiHantei() {
-  var jsondata = JSON.stringify({'msg': '占い。' + argsai});
+function aiHantei(a, min, max) {
+  var jsondata = JSON.stringify({'msg': a + '占い鑑定結果。', 'min' : min, 'max' : max});
 
   // .phpファイルへのアクセス
   // $.ajax('http://localhost:8080/cgi-bin/test.py',
@@ -867,10 +879,11 @@ function aiHantei() {
   )
   // 検索成功時にはページに結果を反映
   .done(function(data) {
-    console.log(data['res'])
+    // console.log(data['res'])
     
     let airesult = document.getElementById("ai-result");
-    airesult.innerHTML = data['res'];
+    airesult.innerHTML = data['msg'];
+    // airesult.innerHTML = data['msg'] +  "<br/>ラッキーアイテム：" +  data['item'];
     // airesult.innerHTML = 'おくら';
   })
   // 検索失敗時には、その旨をダイアログ表示

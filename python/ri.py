@@ -9,6 +9,8 @@ import torch
 import socket
 
 import logging
+
+import bleach
  
 #ロガーの生成
 logger = logging.getLogger('mylog')
@@ -33,14 +35,14 @@ model = model.to(device)
 # prompt = "人生を楽しくポジティブに生きていくための3つのこと。1."
 prompt = "夜の魚取"
 
-def generete(prompt):
+def generete(prompt, min_length, max_length):
 
     input_ids = tokenizer.encode(prompt, return_tensors="pt",add_special_tokens=False).to(device)
     with torch.no_grad():
         output = model.generate(
             input_ids,
-            max_length=250,
-            min_length=200,
+            max_length=max_length,
+            min_length=min_length,
             do_sample=True,
             top_k=500,
             top_p=0.95,
@@ -79,18 +81,68 @@ while True:
     logger.info('受付')
 
     # ソケットから byte 形式でデータ受信
-    data = sock_cl.recv(1024)
-    print(data.decode("utf-8"))
+    data = sock_cl.recv(2048)
+    # print(data.decode("utf-8"))
 
-    a = json.loads(data.decode("utf-8"))
-    print(a['msg'])
-    result = generete(a['msg'])[0]
+    try :
+        a = json.loads(data.decode("utf-8"))
+    except UnicodeDecodeError : 
+        re = {
+            "msg" : 'よくわからなかった。',
+            "item" : ''
+        }
+        sock_cl.send(json.dumps(re).encode('utf-8'))
+        sock_cl.close()
+        continue
 
-    # キーワードを削除する
+    msg = 'おくら'
+    if ("msg" in a) :
+        # HTMLエスケープ処理
+        msg = bleach.clean(a['msg'], strip=True)
+
+    min = len(msg)
+    if ("min" in a) :
+        try :
+            v = int(a["min"])
+            if v > 5:
+                min = v
+        except ValueError:
+            min = min
+
+    max = len(msg)
+    if ("max" in a) :
+        try :
+            # v = len(msg) + int(a["max"])
+            v = int(a["max"])
+            if v > 15:
+                max = v
+        except ValueError:
+            max = max + 10
+
+    if max < min:
+        max = min
+
+    # print(a['msg'])
+    result = generete(msg, min, max)[0]
+
+    # s = a['msg'] + 'ラッキーアイテムは'
+    # l = len(s)
+    # item = generete(s, l + 5, l + 15)[0]
+    # item = generete(s, 5, l + 15)[0]
+
+    # 結果キーワードを削除する
     result = result.lstrip(a['msg'])
     result = result[: result.rfind('。')]
 
-    sock_cl.send(result.encode('utf-8'))
+    # ラッキーアイテムキーワードを削除する
+    # item = item.lstrip(s)
+
+    re = {
+        "msg" : result
+    }
+
+    # sock_cl.send(result.encode('utf-8'))
+    sock_cl.send(json.dumps(re).encode('utf-8'))
 
     # クライアントのソケットを閉じる
     sock_cl.close()

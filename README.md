@@ -13,7 +13,10 @@ conda install transformers
   
 ### Sentencepieceのインストール  
 conda install sentencepiece  
-  
+
+
+conda install bleach
+
 apacheをphp動作できるように設定する
   
   

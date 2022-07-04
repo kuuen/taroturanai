@@ -173,7 +173,7 @@ span.card {
   left:2%;
   width: 76%;
   
-  height : 75%;
+  height : 73%;
   overflow:auto;
 
   position :absolute;
@@ -183,6 +183,8 @@ span.card {
   /* background: #a5ebfd; */
 
   color:white;
+
+  padding-bottom: 10px;
 
   /* background-image:url("img/modalHaikei.png"); */
 
