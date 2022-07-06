@@ -1,15 +1,9 @@
 from transformers import T5Tokenizer, AutoModelForCausalLM
-import os
-import sys
-import cgi
 import json
-
 import torch
 # ソケットライブラリ取り込み
 import socket
-
 import logging
-
 import bleach
  
 #ロガーの生成
@@ -87,6 +81,14 @@ while True:
     try :
         a = json.loads(data.decode("utf-8"))
     except UnicodeDecodeError : 
+        re = {
+            "msg" : 'よくわからなかった。',
+            "item" : ''
+        }
+        sock_cl.send(json.dumps(re).encode('utf-8'))
+        sock_cl.close()
+        continue
+    except json.decoder.JSONDecodeError:
         re = {
             "msg" : 'よくわからなかった。',
             "item" : ''

@@ -31,3 +31,6 @@ Anaconda Prompt (anaconda3)にてri.pyを実行して受信待ち状態にする
 pythonフォルダ以外をwebサーバのドキュメントルートに設置  
 apacheで動作確認できた
 
+## チャットサーバーの起動
+cd taroturanai/chat
+php bin/server.php &

@@ -636,7 +636,7 @@ function kubaru() {
   msg += "<div id='ai-result'>しばらくおまちを</div>"
 
   // aiHantei(argsai, uranaiKekka, 20, 50)
-  aiHantei(argsai, 20, 50)
+  aiHantei(argsai, 100, 200)
 
   for(let i in resultMassage) {
     msg += "<table><tr> <th>";
@@ -866,7 +866,7 @@ function kubaruMove7() {
 }
 
 function aiHantei(a, min, max) {
-  var jsondata = JSON.stringify({'msg': a + '占い鑑定結果。', 'min' : min, 'max' : max});
+  var jsondata = JSON.stringify({'msg': a + '占いの結果です。', 'min' : min, 'max' : max});
 
   // .phpファイルへのアクセス
   // $.ajax('http://localhost:8080/cgi-bin/test.py',
